@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>
+      Lê Nhân — Kích Hoạt Key
+    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&amp;display=swap" rel="stylesheet" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box}
+:root{--canvas:#f7f7f4;--card:#fff;--ink:#262510;--muted:#7a7974;--pebble:#e6e5e0;--accent:#f54e00;--green:#34785c;--red:#d63031;--border:#e6e5e0;--radius:4px;--font:&#39;Lato&#39;,sans-serif;--mono:&#39;Courier New&#39;,monospace}
+body{font-family:var(--font);background:var(--canvas);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{width:100%;max-width:480px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:28px;margin-bottom:12px}
+.logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px}
+.logo svg{color:var(--accent)}
+h1{font-size:22px;font-weight:700;text-align:center}
+.sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.field input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--ink);font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--ink)}
+.btn{width:100%;padding:10px;border:1px solid var(--ink);border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;background:var(--ink);color:var(--canvas);font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .2s}
+.btn:hover{opacity:.85}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--green);border-color:var(--green);color:#fff}
+.btn-o{background:transparent;color:var(--ink);margin-top:8px}
+.btn-d{background:var(--red);border-color:var(--red);color:#fff;padding:6px 10px;font-size:12px;width:auto}
+.result{padding:10px 14px;border-radius:var(--radius);font-size:13px;margin-top:12px;border:1px solid;line-height:1.6}
+.result.ok{background:rgba(52,120,92,.06);border-color:rgba(52,120,92,.2);color:var(--green)}
+.result.err{background:rgba(214,48,49,.06);border-color:rgba(214,48,49,.2);color:var(--red)}
+.key-info{background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.key-info strong{color:var(--accent);font-family:var(--mono)}
+.hidden{display:none}
+.steps{display:flex;gap:8px;margin-bottom:20px}
+.step{flex:1;text-align:center;padding:6px;border-radius:var(--radius);font-size:12px;font-weight:600;background:var(--pebble);color:var(--muted);border:1px solid transparent}
+.step.active{background:var(--ink);color:var(--canvas)}.step.done{background:rgba(52,120,92,.08);color:var(--green);border-color:rgba(52,120,92,.2)}
+.tabs{display:flex;gap:4px;margin-bottom:16px}.tab-btn{flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;background:var(--card);color:var(--muted);font-family:var(--font);text-align:center;transition:.15s}
+.tab-btn:hover{border-color:var(--ink);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--canvas);border-color:var(--ink)}
+.uid-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid var(--pebble);font-size:13px}
+.uid-row:last-child{border:none}
+.uid-row .uid-info{flex:1}.uid-row code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.uid-row .uid-actions{display:flex;gap:4px}
+.uid-row .uid-actions button{padding:4px 8px;font-size:11px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--card);font-family:var(--font);font-weight:600}
+.uid-row .uid-actions .del{color:var(--red);border-color:rgba(214,48,49,.3)}
+.uid-row .uid-actions .rst{color:var(--accent);border-color:rgba(245,78,0,.3)}
+.hist-item{padding:10px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;background:var(--card);font-size:13px;line-height:1.6;position:relative}
+.hist-item:hover{border-color:var(--ink)}
+.hist-item .hi-key{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13px}
+.hist-item .hi-uid{font-family:var(--mono);color:var(--ink);font-size:12px}
+.hist-item .hi-meta{color:var(--muted);font-size:11px}
+.hist-item .hi-inst{display:inline-block;background:rgba(52,120,92,.1);color:#347854;font-size:10px;padding:1px 5px;border-radius:3px;margin:1px 1px;font-weight:600}
+.hist-item .hi-actions{display:flex;gap:4px;margin-top:6px}
+.hist-item .hi-actions button{padding:3px 8px;font-size:11px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--canvas);font-family:var(--font);font-weight:600;transition:.15s}
+.hist-item .hi-actions button:hover{border-color:var(--ink)}
+.hist-item .hi-actions .hi-del{color:var(--red);border-color:rgba(214,48,49,.3)}
+.hist-empty{text-align:center;color:var(--muted);padding:24px;font-size:13px}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z">
+            </path>
+          </svg>
+        </div>
+        <h1>
+          LÊ NHÂN CRACK VIP
+        </h1>
+        <p class="sub">
+          Kích hoạt Key &amp; Quản lý UID
+        </p>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(&#39;activate&#39;)">
+            Kích Hoạt
+          </button>
+          <button class="tab-btn" onclick="switchTab(&#39;lookup&#39;)">
+            Tra Cứu
+          </button>
+          <button class="tab-btn" onclick="switchTab(&#39;history&#39;)">
+            Lịch Sử
+          </button>
+        </div>
+        <!-- TAB: ACTIVATE -->
+        <div id="tab-activate">
+          <div class="steps">
+            <div class="step active" id="s1">
+              1. Key
+            </div>
+            <div class="step" id="s2">
+              2. UID
+            </div>
+            <div class="step" id="s3">
+              3. Tải
+            </div>
+          </div>
+          <div id="p-key">
+            <div class="field">
+              <label>
+                Access Key
+              </label>
+              <input type="text" id="inp-key" placeholder="VD: EB24183E06" autofocus="" />
+            </div>
+            <button class="btn" onclick="checkKey()">
+              Kiểm Tra Key
+            </button>
+            <div id="key-result">
+            </div>
+          </div>
+          <div id="p-uid" class="hidden">
+            <div class="key-info" id="key-info-box">
+            </div>
+            <div id="connected-uids">
+            </div>
+            <div class="field">
+              <label>
+                UID (Tài khoản Game)
+              </label>
+              <input type="text" id="inp-uid" placeholder="Nhập UID game..." />
+            </div>
+            <button class="btn btn-s" onclick="activateKey()">
+              Kích Hoạt
+            </button>
+            <button class="btn btn-o" onclick="goBack()">
+              Quay lại
+            </button>
+            <div id="uid-result">
+            </div>
+          </div>
+          <div id="p-download" class="hidden">
+            <div class="result ok" id="act-info">
+            </div>
+            <button class="btn btn-s" style="margin-top:16px" onclick="downloadProfile()">
+              Tải .mobileconfig
+            </button>
+            <button class="btn btn-o" onclick="location.reload()">
+              Kích hoạt key khác
+            </button>
+          </div>
+        </div>
+        <!-- TAB: LOOKUP -->
+        <div id="tab-lookup" class="hidden">
+          <div class="field">
+            <label>
+              Nhập UID để tra cứu
+            </label>
+            <input type="text" id="inp-lookup" placeholder="Nhập UID..." />
+          </div>
+          <button class="btn" onclick="lookupUID()">
+            Tra Cứu
+          </button>
+          <div id="lookup-result">
+          </div>
+        </div>
+        <!-- TAB: HISTORY -->
+        <div id="tab-history" class="hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">
+              Lịch sử kích hoạt (lưu trên trình duyệt)
+            </label>
+            <button class="btn btn-o" style="font-size:11px;padding:3px 8px" onclick="clearHistory()">
+              Xóa tất cả
+            </button>
+          </div>
+          <div id="history-list">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const API = &#39;activate.php&#39;;
+let currentKey = &#39;&#39;, currentKeyData = null;
+
+function switchTab(tab) {
+    const tabs = [&#39;activate&#39;,&#39;lookup&#39;,&#39;history&#39;];
+    document.querySelectorAll(&#39;.tab-btn&#39;).forEach((b,i) =&gt; { b.classList.toggle(&#39;active&#39;, tabs[i]===tab); });
+    tabs.forEach(t =&gt; document.getElementById(&#39;tab-&#39;+t).classList.toggle(&#39;hidden&#39;, t!==tab));
+    if (tab===&#39;history&#39;) renderHistory();
+}
+
+// ── HISTORY (localStorage) ──
+const HIST_KEY = &#39;CHUNCHUCHE_key_history&#39;;
+function getHistory() { try { return JSON.parse(localStorage.getItem(HIST_KEY)||&#39;[]&#39;); } catch(e) { return []; } }
+function saveHistory(arr) { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); }
+function addHistory(entry) {
+    const hist = getHistory();
+    // Avoid duplicate by key+uid
+    const idx = hist.findIndex(h =&gt; h.key_code===entry.key_code &amp;&amp; h.uid===entry.uid);
+    if (idx &gt;= 0) hist.splice(idx, 1);
+    hist.unshift(entry);
+    if (hist.length &gt; 50) hist.length = 50;
+    saveHistory(hist);
+}
+function removeHistory(i) {
+    const hist = getHistory(); hist.splice(i, 1); saveHistory(hist); renderHistory();
+}
+function clearHistory() {
+    if (!confirm(&#39;Xóa toàn bộ lịch sử?&#39;)) return;
+    localStorage.removeItem(HIST_KEY); renderHistory();
+}
+function renderHistory() {
+    const hist = getHistory();
+    const el = document.getElementById(&#39;history-list&#39;);
+    if (!hist.length) { el.innerHTML = &#39;&lt;div class=&#34;hist-empty&#34;&gt;Chưa có lịch sử kích hoạt nào&lt;/div&gt;&#39;; return; }
+    el.innerHTML = hist.map((h,i) =&gt; {
+        const instHtml = (h.instances||[]).map(n =&gt; &#39;&lt;span class=&#34;hi-inst&#34;&gt;&#39;+n+&#39;&lt;/span&gt;&#39;).join(&#39;&#39;);
+        const expStr = h.expires_human || (h.expires_at ? new Date(h.expires_at*1000).toLocaleString(&#39;vi-VN&#39;) : &#39;—&#39;);
+        return &#39;&lt;div class=&#34;hist-item&#34;&gt;&#39;+
+            &#39;&lt;span class=&#34;hi-key&#34;&gt;&#39;+h.key_code+&#39;&lt;/span&gt; → &lt;span class=&#34;hi-uid&#34;&gt;&#39;+h.uid+&#39;&lt;/span&gt;&lt;br&gt;&#39;+
+            &#39;&lt;span class=&#34;hi-meta&#34;&gt;Hạn: &#39;+expStr+&#39; · &#39;+h.duration_days+&#39;d&lt;/span&gt;&#39;+
+            (instHtml ? &#39;&lt;br&gt;&#39;+instHtml : &#39;&#39;)+
+            &#39;&lt;div class=&#34;hi-actions&#34;&gt;&#39;+
+                &#39;&lt;button onclick=&#34;useHistoryKey(&#39;+i+&#39;)&#34;&gt;Dùng lại key&lt;/button&gt;&#39;+
+                &#39;&lt;button onclick=&#34;dlHistoryProfile(&#39;+i+&#39;)&#34;&gt;Tải .mobileconfig&lt;/button&gt;&#39;+
+                &#39;&lt;button class=&#34;hi-del&#34; onclick=&#34;removeHistory(&#39;+i+&#39;)&#34;&gt;Xóa&lt;/button&gt;&#39;+
+            &#39;&lt;/div&gt;&lt;/div&gt;&#39;;
+    }).join(&#39;&#39;);
+}
+function useHistoryKey(i) {
+    const h = getHistory()[i]; if (!h) return;
+    document.getElementById(&#39;inp-key&#39;).value = h.key_code;
+    switchTab(&#39;activate&#39;); checkKey();
+}
+function dlHistoryProfile(i) {
+    const h = getHistory()[i]; if (!h) return;
+    const f = document.createElement(&#39;form&#39;); f.method=&#39;POST&#39;; f.action=API+&#39;?api=download_profile&#39;;
+    f.innerHTML=&#39;&lt;input name=&#34;key_code&#34; value=&#34;&#39;+h.key_code+&#39;&#34;&gt;&#39;; document.body.appendChild(f); f.submit(); f.remove();
+}
+
+async function checkKey() {
+    const key = document.getElementById(&#39;inp-key&#39;).value.trim();
+    if (!key) return;
+    const fd = new FormData(); fd.append(&#39;key_code&#39;, key);
+    const r = await fetch(API+&#39;?api=check_key&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    if (!d.valid) { document.getElementById(&#39;key-result&#39;).innerHTML=&#39;&lt;div class=&#34;result err&#34;&gt;&#39;+(d.error||&#39;Key không hợp lệ&#39;)+&#39;&lt;/div&gt;&#39;; return; }
+    currentKey = key; currentKeyData = d;
+    let instList = &#39;&#39;;
+    if (d.instances &amp;&amp; d.instances.length) {
+        const instRows = d.instances.map(i =&gt;
+            &#39;&lt;div style=&#34;display:flex;justify-content:space-between;align-items:center;padding:3px 8px;background:rgba(52,120,92,.04);border:1px solid rgba(52,120,92,.12);border-radius:3px;margin:2px 0;font-size:12px&#34;&gt;&#39;+
+            &#39;&lt;span style=&#34;font-weight:600;color:var(--ink)&#34;&gt;&#39;+i.label+&#39;&lt;/span&gt;&#39;+
+            &#39;&lt;span style=&#34;font-family:var(--mono);color:var(--accent);font-weight:700&#34;&gt;&#39;+i.ip_port+&#39;&lt;/span&gt;&lt;/div&gt;&#39;
+        ).join(&#39;&#39;);
+        instList = &#39;&lt;br&gt;&lt;div style=&#34;margin-top:8px&#34;&gt;&lt;div style=&#34;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px&#34;&gt;THONG TIN VPN:&lt;/div&gt;&#39; + instRows + &#39;&lt;/div&gt;&#39;;
+    }
+    let startInfo = &#39;&#39;;
+    if (d.started_at &amp;&amp; d.started_at &gt; 0) {
+        const startDate = new Date(d.started_at * 1000).toLocaleString(&#39;vi-VN&#39;);
+        const daysLeft = Math.max(0, Math.ceil((d.started_at * 1000 + d.duration_days * 86400000 - Date.now()) / 86400000));
+        startInfo = &#39;&lt;br&gt;Kich hoat: &#39; + startDate + &#39;&lt;br&gt;Con lai: &#39; + daysLeft + &#39;/&#39; + d.duration_days + &#39; ngay&#39;;
+    }
+    document.getElementById(&#39;key-info-box&#39;).innerHTML = &#39;Key: &lt;strong&gt;&#39;+d.key_code+&#39;&lt;/strong&gt;&lt;br&gt;Thoi han: &#39;+d.duration_days+&#39; ngay&lt;br&gt;Slot: &#39;+(d.remaining&gt;0?d.remaining:0)+&#39;/&#39;+d.max_uids+&#39; con trong&#39;+startInfo+instList;
+    // Show connected UIDs
+    let html = &#39;&#39;;
+    if (d.connected_uids &amp;&amp; d.connected_uids.length &gt; 0) {
+        html = &#39;&lt;div style=&#34;margin-bottom:12px&#34;&gt;&lt;div style=&#34;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px&#34;&gt;UID ĐÃ KẾT NỐI:&lt;/div&gt;&#39;;
+        d.connected_uids.forEach(u =&gt; {
+            const exp = u.expires_at ? new Date(u.expires_at*1000).toLocaleString(&#39;vi-VN&#39;) : &#39;—&#39;;
+            html += &#39;&lt;div class=&#34;uid-row&#34;&gt;&lt;div class=&#34;uid-info&#34;&gt;&lt;code&gt;&#39;+u.uid+&#39;&lt;/code&gt;&lt;br&gt;&lt;span style=&#34;font-size:11px;color:var(--muted)&#34;&gt;IP: &#39;+(u.ip||&#39;Chưa bind&#39;)+&#39; · Hạn: &#39;+exp+&#39;&lt;/span&gt;&lt;/div&gt;&#39;;
+            html += &#39;&lt;div class=&#34;uid-actions&#34;&gt;&#39;;
+            html += &#39;&lt;button class=&#34;rst&#34; onclick=&#34;resetIP(\&#39;&#39;+u.uid+&#39;\&#39;)&#34;&gt;Xóa IP&lt;/button&gt;&#39;;
+            html += &#39;&lt;button class=&#34;del&#34; onclick=&#34;resetUID(\&#39;&#39;+u.uid+&#39;\&#39;)&#34;&gt;Xóa UID&lt;/button&gt;&#39;;
+            html += &#39;&lt;/div&gt;&lt;/div&gt;&#39;;
+        });
+        html += &#39;&lt;/div&gt;&#39;;
+    }
+    document.getElementById(&#39;connected-uids&#39;).innerHTML = html;
+    document.getElementById(&#39;p-key&#39;).classList.add(&#39;hidden&#39;);
+    document.getElementById(&#39;p-uid&#39;).classList.remove(&#39;hidden&#39;);
+    document.getElementById(&#39;s1&#39;).className=&#39;step done&#39;; document.getElementById(&#39;s2&#39;).className=&#39;step active&#39;;
+}
+
+function goBack() {
+    document.getElementById(&#39;p-uid&#39;).classList.add(&#39;hidden&#39;);
+    document.getElementById(&#39;p-key&#39;).classList.remove(&#39;hidden&#39;);
+    document.getElementById(&#39;s1&#39;).className=&#39;step active&#39;; document.getElementById(&#39;s2&#39;).className=&#39;step&#39;;
+}
+
+async function activateKey() {
+    const uid = document.getElementById(&#39;inp-uid&#39;).value.trim();
+    if (!uid) return;
+    const fd = new FormData(); fd.append(&#39;key_code&#39;, currentKey); fd.append(&#39;uid&#39;, uid);
+    const r = await fetch(API+&#39;?api=activate&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    if (!d.success) { document.getElementById(&#39;uid-result&#39;).innerHTML=&#39;&lt;div class=&#34;result err&#34;&gt;&#39;+(d.error||&#39;Loi&#39;)+&#39;&lt;/div&gt;&#39;; return; }
+
+    // Build full VPN info display
+    let actInst = &#39;&#39;;
+    if (d.instances &amp;&amp; d.instances.length) {
+        const instRows = d.instances.map(i =&gt; {
+            return &#39;&lt;div style=&#34;display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(52,120,92,.04);border:1px solid rgba(52,120,92,.12);border-radius:4px;margin:2px 0;font-size:12px&#34;&gt;&#39;+
+                &#39;&lt;span style=&#34;font-weight:600;color:var(--ink)&#34;&gt;&#39;+i.label+&#39;&lt;/span&gt;&#39;+
+                &#39;&lt;span style=&#34;font-family:var(--mono);color:var(--accent);font-weight:700&#34;&gt;&#39;+i.ip_port+&#39;&lt;/span&gt;&lt;/div&gt;&#39;;
+        }).join(&#39;&#39;);
+        actInst = &#39;&lt;br&gt;&lt;div style=&#34;margin-top:6px&#34;&gt;&lt;div style=&#34;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px&#34;&gt;THONG TIN VPN:&lt;/div&gt;&#39; + instRows + &#39;&lt;/div&gt;&#39;;
+    }
+
+    // Save to history only if new activation
+    if (!d.is_existing) {
+        addHistory({
+            key_code: currentKey,
+            uid: d.uid,
+            expires_at: d.expires_at,
+            expires_human: d.expires_human,
+            duration_days: currentKeyData ? currentKeyData.duration_days : &#39;&#39;,
+            instances: (d.instances||[]).map(i =&gt; i.label + &#39; | &#39; + i.ip_port || &#39;&#39;),
+            activated_at: new Date().toLocaleString(&#39;vi-VN&#39;)
+        });
+    }
+
+    if (d.is_existing) {
+        // UID da ton tai - chi hien thi thong tin, khong chuyen buoc
+        document.getElementById(&#39;uid-result&#39;).innerHTML=
+            &#39;&lt;div class=&#34;result ok&#34;&gt;&#39;+d.message+&#39;&lt;/div&gt;&#39;;
+        document.getElementById(&#39;inp-uid&#39;).value = &#39;&#39;;
+        return;
+    }
+
+    document.getElementById(&#39;act-info&#39;).innerHTML = d.message+&#39;&lt;br&gt;UID: &lt;strong&gt;&#39;+d.uid+&#39;&lt;/strong&gt;&lt;br&gt;Het han: &#39;+d.expires_human+actInst;
+    document.getElementById(&#39;p-uid&#39;).classList.add(&#39;hidden&#39;);
+    document.getElementById(&#39;p-download&#39;).classList.remove(&#39;hidden&#39;);
+    document.getElementById(&#39;s2&#39;).className=&#39;step done&#39;; document.getElementById(&#39;s3&#39;).className=&#39;step active&#39;;
+}
+
+function downloadProfile() {
+    const f = document.createElement(&#39;form&#39;); f.method=&#39;POST&#39;; f.action=API+&#39;?api=download_profile&#39;;
+    f.innerHTML=&#39;&lt;input name=&#34;key_code&#34; value=&#34;&#39;+currentKey+&#39;&#34;&gt;&#39;; document.body.appendChild(f); f.submit(); f.remove();
+}
+
+async function resetUID(uid) {
+    if (!confirm(&#39;Xoa UID &#39;+uid+&#39;?&#39;)) return;
+    const fd = new FormData(); fd.append(&#39;key_code&#39;, currentKey); fd.append(&#39;uid&#39;, uid);
+    const r = await fetch(API+&#39;?api=reset_uid&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    alert(d.success ? d.message : d.error);
+    if (d.success) checkKey();
+}
+
+async function resetIP(uid) {
+    if (!confirm(&#39;Xóa IP của UID &#39;+uid+&#39;?&#39;)) return;
+    const fd = new FormData(); fd.append(&#39;key_code&#39;, currentKey); fd.append(&#39;uid&#39;, uid);
+    const r = await fetch(API+&#39;?api=reset_ip&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    alert(d.success ? d.message : d.error);
+    if (d.success) checkKey();
+}
+
+async function lookupUID() {
+    const uid = document.getElementById(&#39;inp-lookup&#39;).value.trim();
+    if (!uid) return;
+    const fd = new FormData(); fd.append(&#39;uid&#39;, uid);
+    const r = await fetch(API+&#39;?api=lookup_uid&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    const box = document.getElementById(&#39;lookup-result&#39;);
+    if (!d.found) { box.innerHTML=&#39;&lt;div class=&#34;result err&#34;&gt;&#39;+(d.error||&#39;Không tìm thấy&#39;)+&#39;&lt;/div&gt;&#39;; return; }
+    const expDate = d.expires_at ? new Date(d.expires_at*1000).toLocaleString(&#39;vi-VN&#39;) : &#39;—&#39;;
+    const actDate = d.activated_at || &#39;—&#39;;
+    box.innerHTML = &#39;&lt;div class=&#34;result ok&#34;&gt;&#39;+
+        &#39;&lt;strong&gt;UID: &#39;+d.uid+&#39;&lt;/strong&gt;&lt;br&gt;&#39;+
+        &#39;Key: &lt;code&gt;&#39;+d.key_masked+&#39;&lt;/code&gt;&lt;br&gt;&#39;+
+        &#39;Trạng thái: &#39;+(d.status===&#39;active&#39;?&#39;✅ Active&#39;:&#39;❌ Blocked&#39;)+&#39;&lt;br&gt;&#39;+
+        &#39;IP: &#39;+(d.ip||&#39;Chưa bind&#39;)+&#39;&lt;br&gt;&#39;+
+        &#39;Kích hoạt: &#39;+actDate+&#39;&lt;br&gt;&#39;+
+        &#39;Hết hạn: &#39;+expDate+&#39;&lt;br&gt;&#39;+
+        &#39;Het han: &#39;+expDate+
+        &#39;&lt;div style=&#34;margin-top:8px;display:flex;gap:6px&#34;&gt;&#39;+
+            &#39;&lt;button class=&#34;btn btn-o&#34; style=&#34;font-size:12px;padding:4px 10px&#34; onclick=&#34;deleteUIDFromLookup(\&#39;&#39;+d.uid+&#39;\&#39;)&#34;&gt;Xoa UID&lt;/button&gt;&#39;+
+        &#39;&lt;/div&gt;&#39;+
+        &#39;&lt;/div&gt;&#39;;
+}
+
+document.getElementById(&#39;inp-key&#39;).addEventListener(&#39;keydown&#39;, e =&gt; { if(e.key===&#39;Enter&#39;) checkKey(); });
+document.getElementById(&#39;inp-uid&#39;).addEventListener(&#39;keydown&#39;, e =&gt; { if(e.key===&#39;Enter&#39;) activateKey(); });
+document.getElementById(&#39;inp-lookup&#39;).addEventListener(&#39;keydown&#39;, e =&gt; { if(e.key===&#39;Enter&#39;) lookupUID(); });
+
+async function deleteUIDFromLookup(uid) {
+    if (!confirm(&#39;Xóa UID &#39;+uid+&#39; khỏi key? Key sẽ được trả lại 1 slot.&#39;)) return;
+    const fd = new FormData(); fd.append(&#39;uid&#39;, uid);
+    const r = await fetch(API+&#39;?api=delete_uid&#39;,{method:&#39;POST&#39;,body:fd});
+    const d = await r.json();
+    alert(d.success ? d.message : (d.error||&#39;Lỗi&#39;));
+    if (d.success) document.getElementById(&#39;lookup-result&#39;).innerHTML=&#39;&lt;div class=&#34;result ok&#34;&gt;Đã xóa UID &#39;+uid+&#39;&lt;/div&gt;&#39;;
+}
+    </script>
+  </body>
+</html>
